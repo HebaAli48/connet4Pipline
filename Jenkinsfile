@@ -17,7 +17,15 @@ pipeline {
         //         }
         //     }
         // }
-
+        stage('Verify Node.js') {
+            steps {
+                script {
+                    echo "Using Node.js from: ${env.NODE_HOME}"
+                    sh "${env.NODE_HOME}/bin/node --version"
+                }
+            }
+        }
+ 
         stage('Build and Test') {
             steps {
                 script {
