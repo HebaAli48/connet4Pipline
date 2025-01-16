@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_HOME = tool name: 'NodeJS', type: 'NodeJS' // Node.js tool for building the app
+        // NODE_HOME = tool name: 'Node18', type: 'NodeJS' // Node.js tool for building the app
         DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
         DOCKER_TAG = 'latest' // Docker image tag
         DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
