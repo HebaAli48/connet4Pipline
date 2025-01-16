@@ -1,13 +1,7 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:lts-buster-slim' // Use Node.js Docker image for building and testing
-            args '-p 3000:3000' // Map port for local testing
-        }
-    }
+        agent any
 
     environment {
-        CI = 'true' // Enable continuous integration environment
         DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
         DOCKER_TAG = 'latest' // Docker image tag
         DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
@@ -49,17 +43,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Deliver') {
-        //     steps {
-        //         script {
-        //             echo 'Delivering the application...'
-        //             sh './jenkins/scripts/deliver.sh'
-        //             input message: 'Finished using the web site? (Click "Proceed" to continue)'
-        //             sh './jenkins/scripts/kill.sh'
-        //         }
-        //     }
-        // }
 
         stage('Cleanup') {
             steps {
