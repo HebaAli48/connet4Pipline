@@ -2,46 +2,30 @@ pipeline {
     agent any
 
     environment {
+        NODE_HOME = tool name: 'Node12', type: 'NodeJS' // Node.js tool for building the app
         DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
         DOCKER_TAG = 'latest' // Docker image tag
         DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
-        NODE_VERSION = '12' // Node.js version to use
     }
 
     stages {
-        stage('Install Node.js v12') {
+        // stage('Checkout') {
+        //     steps {
+        //         script {
+        //             echo 'Checking out the source code...'
+        //             git 'https://github.com/HebaAli48/connet4Pipline.git'
+        //         }
+        //     }
+        // }
+
+        stage('Build and Test') {
             steps {
                 script {
-                    echo 'Installing Node.js v12...'
-                       sh '''
-                      chmod -R 755 /var/lib/apt/lists
-                      chmod -R 755 /var/cache/apt
-                    '''
+                    echo 'Installing dependencies and building the React app...'
                     sh '''
-                    
-                        curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
-                        apt-get update
-                        apt-get install -y nodejs
+                        npm install
+                        npm run build
                     '''
-                    sh 'node --version' // Confirm Node.js version
-                }
-            }
-        }
-
-        stage('Install') {
-            steps {
-                script {
-                    echo 'Installing dependencies of the React app...'
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Build') {
-            steps {
-                script {
-                    echo 'Building the React app...'
-                    sh 'npm run build'
                 }
             }
         }
@@ -85,10 +69,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully. The Docker image has been pushed to Docker Hub.'
+            echo 'Build and push to Docker Hub successful!'
         }
         failure {
-            echo 'Pipeline failed. Please check the logs for details.'
+            echo 'Build failed. Please check the logs for details.'
         }
     }
 }
