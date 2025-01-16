@@ -3,37 +3,39 @@ pipeline {
 
     environment {
         NODE_HOME = tool name: 'Node12', type: 'NodeJS' // Node.js tool for building the app
-        DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
-        DOCKER_TAG = 'latest' // Docker image tag
-        DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
+        DOCKER_IMAGE = 'hebaali4/react-bootstrap-app'   // Docker image name
+        DOCKER_TAG = 'latest'                           // Docker image tag
+        DOCKER_CREDENTIALS = 'dockerhub'               // Jenkins Docker Hub credentials ID
+    }
+
+    tools {
+        nodejs 'Node12' // Ensure this matches the configured NodeJS tool name
     }
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         script {
-        //             echo 'Checking out the source code...'
-        //             git 'https://github.com/HebaAli48/connet4Pipline.git'
-        //         }
-        //     }
-        // }
         stage('Verify Node.js') {
             steps {
                 script {
                     echo "Using Node.js from: ${env.NODE_HOME}"
-                    sh "${env.NODE_HOME}/bin/node --version"
+                    sh "${env.NODE_HOME}/bin/node --version" // Verify Node.js installation
                 }
             }
         }
- 
-        stage('Build and Test') {
+
+        stage('Install Dependencies') {
             steps {
                 script {
-                    echo 'Installing dependencies and building the React app...'
-                    sh '''
-                        npm install
-                        npm run build
-                    '''
+                    echo 'Installing dependencies...'
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build React App') {
+            steps {
+                script {
+                    echo 'Building the React app...'
+                    sh 'npm run build'
                 }
             }
         }
