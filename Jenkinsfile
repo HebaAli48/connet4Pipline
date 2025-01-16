@@ -8,12 +8,22 @@ pipeline {
     }
 
     stages {
+        stage('Install') {
+            steps {
+                script {
+                    echo 'Installing dependencies of the React app...'
+                    sh '''
+                        npm install
+                    '''
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
-                    echo 'Installing dependencies and building the React app...'
+                    echo 'building the React app...'
                     sh '''
-                        npm install
                         npm run build
                     '''
                 }
