@@ -13,7 +13,12 @@ pipeline {
             steps {
                 script {
                     echo 'Installing Node.js v12...'
+                       sh '''
+                      chmod -R 755 /var/lib/apt/lists
+                      chmod -R 755 /var/cache/apt
+                    '''
                     sh '''
+                    
                         curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
                         apt-get update
                         apt-get install -y nodejs
