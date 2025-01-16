@@ -1,24 +1,20 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:lts-buster-slim' // Use Node.js Docker image for building and testing
+            args '-p 3000:3000' // Map port for local testing
+        }
+    }
 
     environment {
-        // NODE_HOME = tool name: 'Node18', type: 'NodeJS' // Node.js tool for building the app
+        CI = 'true' // Enable continuous integration environment
         DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
         DOCKER_TAG = 'latest' // Docker image tag
         DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
     }
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         script {
-        //             echo 'Checking out the source code...'
-        //             git 'https://github.com/HebaAli48/connet4Pipline.git'
-        //         }
-        //     }
-        // }
-
-        stage('Build and Test') {
+        stage('Build') {
             steps {
                 script {
                     echo 'Installing dependencies and building the React app...'
@@ -54,6 +50,17 @@ pipeline {
             }
         }
 
+        // stage('Deliver') {
+        //     steps {
+        //         script {
+        //             echo 'Delivering the application...'
+        //             sh './jenkins/scripts/deliver.sh'
+        //             input message: 'Finished using the web site? (Click "Proceed" to continue)'
+        //             sh './jenkins/scripts/kill.sh'
+        //         }
+        //     }
+        // }
+
         stage('Cleanup') {
             steps {
                 script {
@@ -69,10 +76,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build and push to Docker Hub successful!'
+            echo 'Pipeline completed successfully. The Docker image has been pushed to Docker Hub.'
         }
         failure {
-            echo 'Build failed. Please check the logs for details.'
+            echo 'Pipeline failed. Please check the logs for details.'
         }
     }
 }
