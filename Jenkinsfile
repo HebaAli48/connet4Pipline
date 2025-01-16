@@ -9,14 +9,14 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    echo 'Checking out the source code...'
-                    git 'https://github.com/HebaAli48/connet4Pipline.git'
-                }
-            }
-        }
+        // stage('Checkout') {
+        //     steps {
+        //         script {
+        //             echo 'Checking out the source code...'
+        //             git 'https://github.com/HebaAli48/connet4Pipline.git'
+        //         }
+        //     }
+        // }
 
         stage('Build and Test') {
             steps {
