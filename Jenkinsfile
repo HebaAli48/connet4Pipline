@@ -1,50 +1,55 @@
 pipeline {
     agent any
 
-    // environment {
-    //     NODE_HOME = tool name: 'NodeJS', type: 'NodeJS'
-    // }
+    environment {
+        NODE_HOME = tool name: 'NodeJS', type: 'NodeJS' // Node.js tool for building the app
+        DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
+        DOCKER_TAG = 'latest' // Docker image tag
+        DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
+    }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git repository
-                git 'https://github.com/HebaAli48/simpleRestaurentPipeline.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
                 script {
-                    // Install dependencies
-                    sh 'npm install'
+                    echo 'Checking out the source code...'
+                    git 'https://github.com/HebaAli48/connet4Pipline.git'
                 }
             }
         }
 
-        stage('Run Tests') {
+        stage('Build and Test') {
             steps {
                 script {
-                    // Run tests (you can add your testing framework here, e.g., Jest, Mocha)
-                    sh 'npm test'
+                    echo 'Installing dependencies and building the React app...'
+                    sh '''
+                        npm install
+                        npm run build
+                    '''
                 }
             }
         }
 
-        stage('Build') {
+        stage('Docker Build') {
             steps {
                 script {
-                    // Build the app (if applicable)
-                    sh 'npm run build'
+                    echo 'Building the Docker image...'
+                    sh """
+                        docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    """
                 }
             }
         }
 
-        stage('Deploy') {
+        stage('Docker Push') {
             steps {
                 script {
-                    // Deploy the app (this depends on your deployment strategy)
-                    sh 'npm run deploy'
+                    echo 'Pushing the Docker image to Docker Hub...'
+                    withDockerRegistry([credentialsId: DOCKER_CREDENTIALS, url: '']) {
+                        sh """
+                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        """
+                    }
                 }
             }
         }
@@ -52,8 +57,11 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    // Clean up any temporary files
-                    sh 'npm run clean'
+                    echo 'Cleaning up Docker images...'
+                    sh """
+                        docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG}
+                        docker system prune -f
+                    """
                 }
             }
         }
@@ -61,10 +69,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build and Deployment Successful!'
+            echo 'Build and push to Docker Hub successful!'
         }
         failure {
-            echo 'Something went wrong. Please check the build logs!'
+            echo 'Build failed. Please check the logs for details.'
         }
     }
 }
