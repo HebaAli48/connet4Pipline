@@ -1,20 +1,33 @@
 pipeline {
-        agent any
+    agent any
 
     environment {
         DOCKER_IMAGE = 'hebaali4/react-bootstrap-app' // Docker image name
         DOCKER_TAG = 'latest' // Docker image tag
         DOCKER_CREDENTIALS = 'dockerhub' // Jenkins Docker Hub credentials ID
+        NODE_VERSION = '12' // Node.js version to use
     }
 
     stages {
+        stage('Install Node.js v12') {
+            steps {
+                script {
+                    echo 'Installing Node.js v12...'
+                    sh '''
+                        curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash -
+                        apt-get update
+                        apt-get install -y nodejs
+                    '''
+                    sh 'node --version' // Confirm Node.js version
+                }
+            }
+        }
+
         stage('Install') {
             steps {
                 script {
                     echo 'Installing dependencies of the React app...'
-                    sh '''
-                        npm install
-                    '''
+                    sh 'npm install'
                 }
             }
         }
@@ -22,10 +35,8 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo 'building the React app...'
-                    sh '''
-                        npm run build
-                    '''
+                    echo 'Building the React app...'
+                    sh 'npm run build'
                 }
             }
         }
