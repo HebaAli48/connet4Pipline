@@ -7,8 +7,7 @@ pipeline {
         DOCKER_CREDENTIALS = 'dockerhub'               // Jenkins Docker Hub credentials ID
     }
 
-  
-
+    stages {
         stage('Install Dependencies') {
             steps {
                 script {
@@ -17,15 +16,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Build React App') {
-        //     steps {
-        //         script {
-        //             echo 'Building the React app...'
-        //             sh 'npm run build'
-        //         }
-        //     }
-        // }
 
         stage('Docker Build') {
             steps {
